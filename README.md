@@ -14,7 +14,7 @@ An advanced, full-stack simulation platform designed to optimize hospital resour
 
 | Layer | Technology |
 | :--- | :--- |
-| **Backend** | Python 3.x, FastAPI, SimPy (Simulation Engine) |
+| **Backend** | Python 3.10.20, FastAPI, SimPy (Simulation Engine) |
 | **AI / ML** | Scikit-learn, NumPy |
 | **Frontend** | Vue.js 3, Axios, Chart.js |
 | **Data Format** | JSON |
