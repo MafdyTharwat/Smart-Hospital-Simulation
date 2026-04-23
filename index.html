@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Hospital Simulation</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div id="app" class="container">
+        <div class="header">
+            <h1>نظام محاكاة المستشفى الذكي</h1>
+        </div>
+
+        <div class="controls">
+            <div class="input-group">
+                <label>عدد المرضى</label>
+                <input type="number" v-model="patients">
+            </div>
+            <div class="input-group">
+                <label>عدد الأطباء</label>
+                <input type="number" v-model="doctors">
+            </div>
+            <button @click="runSim" class="btn btn-run">تشغيل المحاكاة</button>
+            <button @click="analyzeDay" class="btn btn-analyze">تحليل ضغط اليوم</button>
+        </div>
+
+        <div v-if="avgWait !== null" class="stats-area">
+            <div class="stat-card">إجمالي المرضى: {{ tableData.length }}</div>
+            <div class="stat-card">متوسط الانتظار: <span :style="{color: avgWait > 5 ? 'var(--danger)' : 'var(--primary)'}">{{ avgWait }} دقيقة</span></div>
+        </div>
+
+        <table v-if="tableData.length > 0">
+            <thead>
+                <tr>
+                    <th>المريض</th>
+                    <th>الطبيب</th>
+                    <th>العمر</th>
+                    <th>وقت الوصول</th>
+                    <th>الخدمة</th>
+                    <th>مدة الكشف</th>
+                    <th>بداية الكشف</th>
+                    <th>نهاية الكشف</th>
+                    <th>وقت الانتظار</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="row in tableData" :key="row.id">
+                    <td>{{ row.id }}</td>
+                    <td style="color: var(--secondary)">
+                        <span v-if="row.doctor_id"> {{ row.doctor_id }}</span>
+                    </td>
+                    <td>{{ row.age }} سنة</td>
+                    <td>{{ formatTime(row.arrival_time) }}</td>
+                    <td>{{ row.service_type }}</td>
+                    <td>{{ row.duration }} دقيقة</td>
+                    <td>{{ formatTime(row.start_time) }}</td>
+                    <td>{{ formatTime(row.end_time) }}</td>
+                    <td>{{ row.wait_time }} د</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="chart-container" v-show="tableData.length > 0">
+            <h3>تحليل وقت الانتظار الفردي لكل مريض</h3>
+            <canvas id="waitChart"></canvas>
+        </div>
+
+        <div class="chart-container" id="analysisSection" style="display:none; margin-top: 60px;">
+            <h3>تحليل متوسط الانتظار عبر فترات اليوم (Resource Optimization)</h3>
+            <canvas id="dayChart"></canvas>
+            <div v-if="recommendation" class="recommendation-box">
+                نصيحة النظام: {{ recommendation }}
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
