@@ -9,74 +9,143 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 </head>
 <body>
-    <div id="app" class="container">
-        <div class="header">
-            <h1>نظام محاكاة المستشفى الذكي</h1>
+    <div id="app">
+        
+        <div class="top-nav">
+            <button v-if="currentView === 'simulation'" @click="currentView = 'summary'" class="btn btn-analyze">ملخص النظام</button>
+            <button v-if="currentView === 'summary'" @click="currentView = 'simulation'" class="btn btn-run">العودة للمحاكاة</button>
         </div>
 
-        <div class="controls">
-            <div class="input-group">
-                <label>عدد المرضى</label>
-                <input type="number" v-model="patients">
+        <div class="container" v-show="currentView === 'simulation'">
+            <div class="header">
+                <h1>نظام محاكاة المستشفى الذكي</h1>
             </div>
-            <div class="input-group">
-                <label>عدد الأطباء</label>
-                <input type="number" v-model="doctors">
+
+            <div class="controls">
+                <div class="input-group">
+                    <label>عدد المرضى</label>
+                    <input type="number" v-model="patients">
+                </div>
+                <div class="input-group">
+                    <label>عدد الأطباء</label>
+                    <input type="number" v-model="doctors">
+                </div>
+                <button @click="runSim" class="btn btn-run">تشغيل المحاكاة</button>
+                <button @click="analyzeDay" class="btn btn-analyze">تحليل ضغط اليوم</button>
+                <button @click="exportToExcel" class="btn" style="background-color: #27ae60; color: white;" v-if="tableData.length > 0">Export to Excel</button>
             </div>
-            <button @click="runSim" class="btn btn-run">تشغيل المحاكاة</button>
-            <button @click="analyzeDay" class="btn btn-analyze">تحليل ضغط اليوم</button>
-        </div>
 
-        <div v-if="avgWait !== null" class="stats-area">
-            <div class="stat-card">إجمالي المرضى: {{ tableData.length }}</div>
-            <div class="stat-card">متوسط الانتظار: <span :style="{color: avgWait > 5 ? 'var(--danger)' : 'var(--primary)'}">{{ avgWait }} دقيقة</span></div>
-        </div>
+            <div v-if="avgWait !== null" class="stats-area">
+                <div class="stat-card">إجمالي المرضى: {{ tableData.length }}</div>
+                <div class="stat-card">متوسط الانتظار: <span :style="{color: avgWait > 5 ? 'var(--danger)' : 'var(--primary)'}">{{ avgWait }} دقيقة</span></div>
+            </div>
 
-        <table v-if="tableData.length > 0">
-            <thead>
-                <tr>
-                    <th>المريض</th>
-                    <th>الطبيب</th>
-                    <th>العمر</th>
-                    <th>وقت الوصول</th>
-                    <th>الخدمة</th>
-                    <th>مدة الكشف</th>
-                    <th>بداية الكشف</th>
-                    <th>نهاية الكشف</th>
-                    <th>وقت الانتظار</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="row in tableData" :key="row.id">
-                    <td>{{ row.id }}</td>
-                    <td style="color: var(--secondary)">
-                        <span v-if="row.doctor_id"> {{ row.doctor_id }}</span>
-                    </td>
-                    <td>{{ row.age }} سنة</td>
-                    <td>{{ formatTime(row.arrival_time) }}</td>
-                    <td>{{ row.service_type }}</td>
-                    <td>{{ row.duration }} دقيقة</td>
-                    <td>{{ formatTime(row.start_time) }}</td>
-                    <td>{{ formatTime(row.end_time) }}</td>
-                    <td>{{ row.wait_time }} د</td>
-                </tr>
-            </tbody>
-        </table>
+            <table v-if="tableData.length > 0">
+                <thead>
+                    <tr>
+                        <th>المريض</th>
+                        <th>الطبيب</th>
+                        <th>العمر</th>
+                        <th>وقت الوصول</th>
+                        <th>الخدمة</th>
+                        <th>مدة الكشف</th>
+                        <th>بداية الكشف</th>
+                        <th>نهاية الكشف</th>
+                        <th>وقت الانتظار</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="row in tableData" :key="row.id">
+                        <td>{{ row.id }}</td>
+                        <td style="color: var(--secondary)">
+                            <span v-if="row.doctor_id"> {{ row.doctor_id }}</span>
+                        </td>
+                        <td>{{ row.age }} سنة</td>
+                        <td>{{ formatTime(row.arrival_time) }}</td>
+                        <td>{{ row.service_type }}</td>
+                        <td>{{ row.duration }} دقيقة</td>
+                        <td>{{ formatTime(row.start_time) }}</td>
+                        <td>{{ formatTime(row.end_time) }}</td>
+                        <td>{{ row.wait_time }} د</td>
+                    </tr>
+                </tbody>
+            </table>
 
-        <div class="chart-container" v-show="tableData.length > 0">
-            <h3>تحليل وقت الانتظار الفردي لكل مريض</h3>
-            <canvas id="waitChart"></canvas>
-        </div>
+            <div class="dashboard-grid" v-show="tableData.length > 0">
+                <div class="chart-box">
+                    <h3>توزيع الخدمات</h3>
+                    <canvas id="serviceChart"></canvas>
+                </div>
+                <div class="chart-box">
+                    <h3>عدد المرضى حسب العمر</h3>
+                    <canvas id="ageDistChart"></canvas>
+                </div>
+                <div class="chart-box">
+                    <h3>متوسط الانتظار لكل فئة عمرية</h3>
+                    <canvas id="ageWaitChart"></canvas>
+                </div>
+            </div>
 
-        <div class="chart-container" id="analysisSection" style="display:none; margin-top: 60px;">
-            <h3>تحليل متوسط الانتظار عبر فترات اليوم (Resource Optimization)</h3>
-            <canvas id="dayChart"></canvas>
-            <div v-if="recommendation" class="recommendation-box">
-                نصيحة النظام: {{ recommendation }}
+            <div class="chart-container" v-show="tableData.length > 0">
+                <h3>تحليل وقت الانتظار الفردي لكل مريض</h3>
+                <canvas id="waitChart"></canvas>
+            </div>
+
+            <div class="chart-container" id="analysisSection" style="display:none; margin-top: 60px;">
+                <h3>تحليل متوسط الانتظار عبر فترات اليوم (Resource Optimization)</h3>
+                <canvas id="dayChart"></canvas>
+                <div v-if="recommendation" class="recommendation-box">
+                     نصيحة النظام: {{ recommendation }}
+                </div>
             </div>
         </div>
+
+        <div class="container summary-page" v-show="currentView === 'summary'">
+    <div class="header">
+        <h1>دليل نظام المحاكاة الذكي</h1>
+    </div>
+    
+    <div class="content-text">
+        <div class="summary-section">
+            <h3>الهدف من النظام</h3>
+            <p>يهدف هذا النظام إلى مساعدة إدارة المستشفيات في فهم كيفية تدفق المرضى داخل الأقسام المختلفة. من خلال المحاكاة، يمكننا تجربة سيناريوهات مختلفة (مثل زيادة عدد الأطباء أو تغيير أعداد المرضى) لمعرفة تأثير ذلك على جودة الخدمة قبل تطبيقها على أرض الواقع.</p>
+        </div>
+
+        <div class="summary-section">
+            <h3>تكامل الذكاء الاصطناعي</h3>
+            <p>على عكس أنظمة المحاكاة التقليدية التي تعتمد على الصدفة، يستخدم نظامنا "توقعات ذكية" تعتمد على بيانات سابقة. النظام يستطيع تخمين الوقت الذي سيقضيه كل مريض داخل غرفة الكشف بدقة عالية بناءً على عمره ونوع الكشف، مما يجعل نتائج المحاكاة أقرب ما يكون للواقع.</p>
+        </div>
+
+        <div class="summary-section">
+            <h3>مميزات النظام</h3>
+            <ul>
+                <li><strong>دقة عالية:</strong> يعطي نتائج واقعية تساعد في اتخاذ قرارات إدارية سليمة.</li>
+                <li><strong>تقارير بصرية:</strong> يوفر رسوم بيانية فورية توضح أماكن الزحام وأوقات الذروة.</li>
+                <li><strong>تحليل ذكي:</strong> يقدم نصائح آلية لتحسين أداء العمل وتقليل فترات انتظار المرضى.</li>
+                <li><strong>تصدير البيانات:</strong> إمكانية استخراج كافة النتائج في ملفات خارجية لمراجعتها لاحقاً.</li>
+            </ul>
+        </div>
+
+        <div class="summary-section">
+            <h3>خطوات التشغيل</h3>
+            <ol>
+                <li>قم بتحديد عدد المرضى المتوقع استقبالهم في اليوم.</li>
+                <li>حدد عدد الأطباء المتاحين في غرف الكشف.</li>
+                <li>اضغط على <strong>"تشغيل المحاكاة"</strong> لمراقبة تدفق المرضى لحظياً.</li>
+                <li>استخدم زر <strong>"تحليل ضغط اليوم"</strong> لمعرفة الفترات التي يحتاج فيها المستشفى لدعم إضافي.</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+        <footer class="app-footer">
+            <p>© 2026 مشروع محاكاة المستشفى الذكي | FCI 3<sup>rd</sup> Year</p>
+        </footer>
+
     </div>
 
     <script src="app.js"></script>
