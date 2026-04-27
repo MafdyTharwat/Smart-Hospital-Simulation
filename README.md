@@ -1,17 +1,15 @@
 # Smart Hospital AI Simulation System
 
-An advanced, full-stack simulation platform designed to optimize hospital resource management. This project bridges the gap between **Discrete Event Simulation (DES)**, **Machine Learning**, and **Interactive Data Engineering** to provide actionable insights for hospital administrators.
-
----
+An advanced, full-stack simulation platform designed to optimize hospital resource management. This project bridges the gap between **Discrete Event Simulation**, **Machine Learning**, and **Interactive Data Engineering** to provide actionable insights for hospital administrators.
 
 ## Project Objective
-The goal of this system is to help hospital management understand and optimize patient flow. By simulating various scenarios (e.g., changing doctor availability or patient volume), the system identifies potential bottlenecks and tests resource allocation strategies before real-world implementation.
+The goal of this system is to help hospital management understand and optimize patient flow. By simulating various scenarios, the system identifies potential bottlenecks and tests resource allocation strategies before real-world implementation.
 
 ## Key Features
 
 * **AI-Driven Duration Prediction**: Implements a `RandomForestRegressor` model to predict consultation durations based on patient age and service type, moving beyond simple random distributions.
 * **Priority-Based Triage**: A custom queuing system that prioritizes "Emergency" (طوارئ) cases over routine check-ups using specialized simulation logic.
-* **📊 Advanced Analytics Suite**: Interactive visualizations powered by **Chart.js**, including:
+* **Advanced Analytics Suite**: Interactive visualizations powered by **Chart.js**, including:
     * **Service Distribution**: Departmental load balancing.
     * **Demographic Insights**: Correlation between age groups and waiting times.
     * **Hourly Pressure Analysis**: Identifying peak bottleneck periods.
@@ -42,6 +40,9 @@ The export module embeds live logic into the generated report:
 * **Automatic Wait Time**: Updates instantly if arrival or service times are adjusted manually.
 
 ##Screenshots
-<img width="3839" height="2159" alt="Simulation View" src="https://github.com/user-attachments/assets/eddfc11d-0cd6-45b2-8c22-cda3d422e275" />
-<img width="3836" height="2159" alt="Analytics Dashboard" src="https://github.com/user-attachments/assets/9d645815-d2aa-4e3e-a76c-4fa8d8b08955" />
-<img width="3839" height="2159" alt="System Summary" src="https://github.com/user-attachments/assets/433452dd-471d-4870-acb1-b495d65674e0" />
+<img width="3839" height="2159" alt="Screenshot 2026-04-27 170325" src="https://github.com/user-attachments/assets/b0bafd4f-f1da-4717-98cf-de45d281e929" />
+<img width="3839" height="2159" alt="Screenshot 2026-04-27 170443" src="https://github.com/user-attachments/assets/b1f4fc35-ea57-412a-b112-ba0cb56d94c8" />
+<img width="3839" height="2159" alt="Screenshot 2026-04-27 170458" src="https://github.com/user-attachments/assets/7c696257-53d3-4f68-a655-2bb1e2545af2" />
+<img width="3837" height="2157" alt="Screenshot 2026-04-27 170514" src="https://github.com/user-attachments/assets/494e63e8-ca89-4323-8408-7b5b71440e0a" />
+<img width="3838" height="2159" alt="Screenshot 2026-04-27 170524" src="https://github.com/user-attachments/assets/8ca799a8-4ee3-4304-919d-8036f9dad2d9" />
+<img width="3839" height="2159" alt="Screenshot 2026-04-27 170537" src="https://github.com/user-attachments/assets/a980ac56-dc4b-4e07-b5ea-0de25bdbaa1e" />
