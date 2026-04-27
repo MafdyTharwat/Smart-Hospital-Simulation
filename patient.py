@@ -5,7 +5,7 @@ class Patient:
         self.arrival_time = arrival_time
         self.service_type = service_type
         self.duration = duration
-        self.doctor_id = 0 # initial val, It will be updated in simulation
+        self.doctor_id = 0
         self.start_time = 0
         self.end_time = 0
         self.wait_time = 0
