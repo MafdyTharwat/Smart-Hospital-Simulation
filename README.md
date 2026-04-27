@@ -16,7 +16,7 @@ The goal of this system is to help hospital management understand and optimize p
 * **Interactive Excel Export**: A professional-grade export feature using **ExcelJS** that generates `.xlsx` files with **dynamic formulas**. If a user modifies a value (like a duration) in the sheet, all subsequent times and wait periods update automatically.
 * **Integrated User Guide**: An Arabic-language summary within the UI to explain AI integration and system steps to non-technical stakeholders.
 
-##Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 | :--- | :--- |
@@ -26,20 +26,20 @@ The goal of this system is to help hospital management understand and optimize p
 | **Data Export** | **ExcelJS**, **FileSaver.js** (Formula-based Dynamic Sheets) |
 | **Data Format** | JSON |
 
-##AI Insights & Optimization
+## AI Insights & Optimization
 
 The system doesn't just simulate; it analyzes. The "Day Analysis" module processes simulation logs to provide:
 1.  **Bottleneck Identification**: Pinpoints the exact hour where patient inflow exceeds doctor capacity.
 2.  **Smart Recommendations**: Generates AI-driven advice (e.g., "Add an extra doctor during the 1:00 PM peak") to maintain waiting times below critical thresholds.
 3.  **Predictive Scheduling**: Estimates waiting times before the simulation even finishes, thanks to the trained ML model.
 
-##Dynamic Spreadsheet Logic
+## Dynamic Spreadsheet Logic
 The export module embeds live logic into the generated report:
 * **Smart Start Time**: Calculated as `=MAX(Arrival_Time, Previous_Patient_End_Time)`.
 * **Live End Time**: Linked as `=Start_Time + (Duration / 1440)`.
 * **Automatic Wait Time**: Updates instantly if arrival or service times are adjusted manually.
 
-##Screenshots
+## Screenshots
 <img width="3839" height="2159" alt="Screenshot 2026-04-27 170325" src="https://github.com/user-attachments/assets/b0bafd4f-f1da-4717-98cf-de45d281e929" />
 <img width="3839" height="2159" alt="Screenshot 2026-04-27 170443" src="https://github.com/user-attachments/assets/b1f4fc35-ea57-412a-b112-ba0cb56d94c8" />
 <img width="3839" height="2159" alt="Screenshot 2026-04-27 170458" src="https://github.com/user-attachments/assets/7c696257-53d3-4f68-a655-2bb1e2545af2" />
